@@ -35,7 +35,7 @@ else:
     # Proceed with updating configuration
     if agree != "Y" and agree != "y":
         print("Script execution canceled")
-        sys.exit
+        sys.exit(1)
     else:
         # Delete port group
         vmw.del_dvPort_group(dportgroup)
