@@ -2,6 +2,7 @@
   # Specify credentials
   vsphere_ip: 1.2.3.4
   account: admin
+  # Password is optional. Comment it and enter the password in input dialog.
   passw: my_password
 
   # Specify the switch the distributed port groups will be created
