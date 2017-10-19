@@ -3,7 +3,6 @@
 from vsphere import vSphere
 from vsphere import credentials
 from vsphere import seldc
-from vsphere import dvswitch
 import sys
 from termcolor import cprint
 
@@ -38,7 +37,11 @@ else:
     vmw = vSphere(*cred)
 
     # Create serial port
-    vmw.add_telnet(vm_name, telnetport)
+    if vmw.find_vm(vm_name):
+        vmw.add_telnet(vm_name, telnetport)
+    else:
+        print('VM {} not found'.format(vm_name))
+
 
 
 

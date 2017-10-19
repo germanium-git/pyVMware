@@ -5,20 +5,18 @@ from vsphere import credentials
 from vsphere import seldc
 import sys
 
-
 # Select the vSphere to be modified
 inputs = 'inputs/vsphere_' + seldc(sys.argv[1:]) + '.yml'
-#inputs = 'inputs/vsphere_myvmware.yml'
 
 
-# Specify manually the distributed port group to be created
+# Specify manually the VM to be found
 vm = raw_input("Virtual machine: ")
 
 # Create an instance of Class vSphere
 cred = credentials(inputs)
 vmw = vSphere(*cred)
 
-# Check if the port group already exist
+# Check if the VM exists
 det = vmw.find_vm(vm)
 if det:
     print('\n')
@@ -29,6 +27,6 @@ if det:
     print('\n')
 else:
     print('\nVM not found')
-#print(det)
+
 
 

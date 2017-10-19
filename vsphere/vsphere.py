@@ -231,14 +231,17 @@ class vSphere:
                 print out
         else:
             out = '%s did not complete successfully: %s' % (actionName, task.info.error)
-            raise task.info.error
             print out
+            raise task.info.error
 
         return task.info.result
 
 
 
     def add_dvPort_group(self, dvswname, dv_port_name, vlan_id, *args):
+        """
+        It creates new distributed port group
+        """
         dv_pg_spec = vim.dvs.DistributedVirtualPortgroup.ConfigSpec()
         dv_pg_spec.name = dv_port_name
         dv_pg_spec.numPorts = 11
@@ -275,7 +278,7 @@ class vSphere:
             dv_pg_spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.inherited = True
 
         #dv_pg_spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.standbyUplinkPort = 'Unset'
-        #dv_pg_spec.cdefaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.standbyUplinkPort[0] = "dvUplink2"
+        #dv_pg_spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.standbyUplinkPort[0] = "dvUplink2"
         #dv_pg_spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.standbyUplinkPort[1] = "dvUplink4"
 
         dv_switch = self.find_dvSwitch(dvswname)

@@ -4,7 +4,8 @@ from vsphere import vSphere
 from vsphere import credentials
 
 
-inputs = 'inputs/vsphere_myvmware.yml'
+# Select the vSphere to be modified
+inputs = 'inputs/vsphere_' + seldc(sys.argv[1:]) + '.yml'
 
 
 # Create an instance of Class vSphere
