@@ -5,7 +5,7 @@ from vsphere import credentials
 from vsphere import dvswitch
 
 
-inputs = 'inputs/vsphere.yml'
+inputs = 'inputs/vsphere_myvmware.yml'
 
 # It returns the name of distributed switch and active uplink in teaming policy
 dswitch = dvswitch(inputs)

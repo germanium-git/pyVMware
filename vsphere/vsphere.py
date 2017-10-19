@@ -6,7 +6,60 @@ from pyVmomi import vim, vmodl
 import time
 import yaml
 import getpass
+import sys, getopt
 
+
+
+from os import listdir
+from os.path import isfile, join
+
+# Specify the inventory folder
+mypath = 'inputs'
+
+def getiventories(mypath):
+    """
+    :param argv: Path to inventory files
+    :return:     list of inventories
+    """
+
+    onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+    inv_list = []
+    for file in onlyfiles:
+        inv_list.append(file.split('_')[-1][:-4])
+    return inv_list
+
+
+def seldc(argv):
+    """
+    :param argv: Command line argumets
+    :return:     Name of the inventory file
+    """
+    inp = ''
+    try:
+        opts, args = getopt.getopt(argv,"hi:")
+    except getopt.GetoptError:
+        print 'Use this script with the parameter e.g.:'
+        print 'python <script>.py -i <DC>'
+        print 'python <script>.py -h for more information'
+        sys.exit()
+    for opt, arg in opts:
+        if opt == '-h':
+            print 'Use this script with inventory parameter'
+            print(' -i myvmware - for MyVMware lab ')
+            sys.exit()
+        elif opt in ("-i"):
+            if arg in getiventories(mypath):
+                inp = arg
+            else:
+                print('Invalid argument')
+                print('Only these inventories are valid: ', getiventories(mypath))
+                sys.exit()
+    if not(opts):
+        print 'Use this script with the parameter e.g.:'
+        print 'python <script>.py -i <DC>'
+        print 'python <script>.py -h for more information'
+        sys.exit()
+    return inp
 
 
 def credentials(inputfile):
@@ -42,7 +95,9 @@ def dvswitch(inputfile):
 
     dswitch = {}
     dswitch['name'] = raw_input("Distributed switch [%s]: " % vm_sw['dswitch']) or vm_sw['dswitch']
-    dswitch['actuplink'] = vm_sw['actuplink']
+    dswitch['banner'] = vm_sw['banner']
+    if 'actuplink' in vm_sw.keys():
+        dswitch['actuplink'] = vm_sw['actuplink']
 
     return dswitch
 
@@ -53,6 +108,21 @@ class vSphere:
         self.vsphere_ip = vsphere_ip
         self.login = login
         self.pswd = pswd
+
+
+
+    def get_vm_id(self, content, vimtype, objid):
+        """
+        Get the VM associated with a given id - 'vim.VirtualMachine:vm-18'
+        """
+        recursive = True  # whether we should look into it recursively
+        obj = None
+        container = content.viewManager.CreateContainerView(content.rootFolder, vimtype, recursive)
+        for c in container.view:
+            if c.summary.vm == objid:
+                obj = c
+                break
+        return obj
 
 
     def get_obj(self, content, vimtype, name):
@@ -67,6 +137,17 @@ class vSphere:
                 obj = c
                 break
         return obj
+
+
+
+    def get_all(self, content, vimtype):
+        """
+        Get the vsphere object associated with a given text name
+        """
+        recursive = True  # whether we should look into it recursively
+        container = content.viewManager.CreateContainerView(content.rootFolder, vimtype, recursive)
+        return container.view
+
 
 
     def retrieve_content(self):
@@ -98,11 +179,11 @@ class vSphere:
         # print(obj.summary)
         # Check if object exists
         if obj and obj.summary.name == dvpgname:
-            print('Attention - the distributed port {0} group already exists'.format(dvpgname))
+            print('The distributed port {0} group exists'.format(dvpgname))
             print(str(obj.summary.network)).replace('vim.dvs.DistributedVirtualPortgroup:', '')
             dupplicate = True
         else:
-            print('No dupplicate Distributed Port Group found')
+            print('Distributed Port Group not found')
         return dupplicate
 
 
@@ -118,10 +199,10 @@ class vSphere:
         dupplicate = False
         for i in obj.QueryUsedVlanIdInDvs():
             if i == int(vlan):
-                print('Attention - the VLAN {0} already exists'.format(vlan))
+                print('The VLAN {0} exists'.format(vlan))
                 dupplicate = True
         if not dupplicate:
-            print('No dupplicate VLAN ID found')
+            print('VLAN ID not found')
         return dupplicate
 
     def find_dvSwitch(self, dwswname):
@@ -157,7 +238,7 @@ class vSphere:
 
 
 
-    def add_dvPort_group(self, dvswname, dv_port_name, vlan_id, actuplink = 'Unset'):
+    def add_dvPort_group(self, dvswname, dv_port_name, vlan_id, *args):
         dv_pg_spec = vim.dvs.DistributedVirtualPortgroup.ConfigSpec()
         dv_pg_spec.name = dv_port_name
         dv_pg_spec.numPorts = 11
@@ -179,9 +260,23 @@ class vSphere:
         dv_pg_spec.defaultPortConfig.securityPolicy.macChanges = vim.BoolPolicy(value=True)
         dv_pg_spec.defaultPortConfig.securityPolicy.inherited = False
 
+
         # Specify teaming policy and name of the active uplink
-        dv_pg_spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.activeUplinkPort = actuplink
+        # Configure active uplink ports
+        if args:
+            dv_pg_spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.inherited = False
+            dv_pg_spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.activeUplinkPort = []
+            for arg in args:
+                dv_pg_spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.activeUplinkPort.append(arg)
+                # dv_pg_spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.activeUplinkPort = actuplink
+                # dv_pg_spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.activeUplinkPort[0] = actuplink[0]
+                # dv_pg_spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.activeUplinkPort[1] = actuplink[1]
+        else:
+            dv_pg_spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.inherited = True
+
         #dv_pg_spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.standbyUplinkPort = 'Unset'
+        #dv_pg_spec.cdefaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.standbyUplinkPort[0] = "dvUplink2"
+        #dv_pg_spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.standbyUplinkPort[1] = "dvUplink4"
 
         dv_switch = self.find_dvSwitch(dvswname)
 
@@ -200,3 +295,58 @@ class vSphere:
         else:
             print("The specified distributed port group doesn't exist")
 
+
+
+    def find_vm(self, vmname):
+        """
+        It searches for specific VM
+        """
+        content = self.retrieve_content()
+        obj = self.get_obj(content, [vim.VirtualMachine], vmname)
+        return obj
+
+
+
+    def add_telnet(self, vmname, port):
+        serial_spec = vim.vm.device.VirtualDeviceSpec()
+        serial_spec.operation = 'add'
+        serial_port = vim.vm.device.VirtualSerialPort()
+        serial_port.yieldOnPoll = True
+
+        backing = serial_port.URIBackingInfo()
+        backing.serviceURI = 'telnet://:' + port
+        backing.direction = 'server'
+        serial_port.backing = backing
+        serial_spec.device = serial_port
+
+        dev_changes = []
+        dev_changes.append(serial_spec)
+
+        # load empty config template applicable to VMs
+        spec = vim.vm.ConfigSpec()
+        spec.deviceChange = dev_changes
+
+        vm = self.find_vm(vmname)
+        task = vm.ReconfigVM_Task(spec)
+        self.wait_for_task(task)
+
+
+    def list_vm(self):
+        """
+        It searches for all VMs and 
+        """
+        content = self.retrieve_content()
+        obj = self.get_all(content, [vim.VirtualMachine])
+        
+        for i in obj:
+            #print(self.get_vm_id(content, [vim.VirtualMachine], i))
+            #print(i)
+            print('\n')
+            print("VM name:    {0}".format(i.summary.config.name))
+            print("UUID:       {0}".format(i.summary.config.uuid))
+            print("Host name:  {0}".format(i.summary.guest.hostName))
+            print("IP address: {0}".format(i.summary.guest.ipAddress))
+            print('\n')
+            #print(self.get_vm_id(content, [vim.VirtualMachine], i))
+
+        #return obj

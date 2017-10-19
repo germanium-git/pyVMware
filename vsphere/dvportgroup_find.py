@@ -4,7 +4,7 @@ from vsphere import vSphere
 from vsphere import credentials
 
 
-inputs = 'inputs/vsphere.yml'
+inputs = 'inputs/vsphere_myvmware.yml'
 
 
 # Specify manually the distributed port group to be created

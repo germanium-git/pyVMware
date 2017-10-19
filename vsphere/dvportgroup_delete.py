@@ -7,7 +7,7 @@ from vsphere import credentials
 dportgroup = raw_input("Distributed port group to be deleted: ")
 
 # Read the credentials for vSphere from YAML file and input dialog
-inputs = 'inputs/vsphere.yml'
+inputs = 'inputs/vsphere_myvmware.yml'
 
 
 # Create an instance of Class vSphere

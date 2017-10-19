@@ -13,5 +13,5 @@ dvportgroup_create.py - It creates new distributed port group on a specific dist
 
 dvportgroup_delete.py - It deletes distributed port group
 
-Note: Don't forget update inventory file with appropriate credentials etc.
+Note: Don't forget update the inventory file inputs/vsphere.yml with appropriate credentials etc.
 
