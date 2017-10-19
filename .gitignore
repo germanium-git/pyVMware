@@ -1,0 +1,7 @@
+.gitattributes
+.idea/*
+vsphere/inputs/vsphere_nogit.yml
+
+
+.idea/
+

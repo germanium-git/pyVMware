@@ -1,0 +1,9 @@
+---
+  # Specify credentials
+  vsphere_ip: 1.2.3.4
+  account: admin
+  passw: my_password
+
+  # Specify the switch the distributed port groups will be created
+  dswitch: switchname
+  actuplink: uplinkname
