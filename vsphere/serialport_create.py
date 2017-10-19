@@ -10,10 +10,6 @@ from termcolor import cprint
 # Select the vSphere to be modified
 inputs = 'inputs/vsphere_' + seldc(sys.argv[1:]) + '.yml'
 
-# Get the name of distributed switch, banner and active uplink in teaming policy
-# specified in the inventory *.yml file
-dswitch = dvswitch(inputs)
-
 
 # Specify the telnet port
 telnetport = raw_input("Telnet port: ")
@@ -23,10 +19,6 @@ while not telnetport.isdigit():
 
 vm_name = raw_input("VM name: ")
 
-
-# Display the information banner what vSphere instance is to be modified
-print('\n')
-cprint(dswitch['banner'], 'yellow')
 
 # Review and accept or decline the proposed changes
 cprint('\nReview the serial port to be created:', 'red')
