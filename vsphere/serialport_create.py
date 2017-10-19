@@ -22,7 +22,7 @@ vm_name = raw_input("VM name: ")
 # Review and accept or decline the proposed changes
 cprint('\nReview the serial port to be created:', 'red')
 print('  Telnet port: %s ' % telnetport)
-print('  VM:            %s ' % vm_name)
+print('  VM:          %s ' % vm_name)
 
 agree = raw_input("Do you want to apply these changes? y/n[N]: " or 'N')
 
