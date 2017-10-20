@@ -336,15 +336,15 @@ class vSphere:
 
     def list_vm(self):
         """
-        It searches for all VMs and 
+        It searches for all VMs
         """
         content = self.retrieve_content()
         obj = self.get_all(content, [vim.VirtualMachine])
-        
+
         for i in obj:
             #print(self.get_vm_id(content, [vim.VirtualMachine], i))
-            #print(i)
             print('\n')
+            print("VM-id:      {0}".format(str(i).split(':')[-1][:-1]))
             print("VM name:    {0}".format(i.summary.config.name))
             print("UUID:       {0}".format(i.summary.config.uuid))
             print("Host name:  {0}".format(i.summary.guest.hostName))
@@ -353,3 +353,4 @@ class vSphere:
             #print(self.get_vm_id(content, [vim.VirtualMachine], i))
 
         #return obj
+
