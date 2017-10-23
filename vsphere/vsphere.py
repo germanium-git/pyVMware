@@ -287,7 +287,19 @@ class vSphere:
         self.wait_for_task(task)
         print("Successfully created DV Port Group {0}".format(dv_port_name))
         
-  
+
+    def list_portgroups(self):
+        """
+        It searches for all portgroups
+        """
+        content = self.retrieve_content()
+        obj = self.get_all(content, [vim.dvs.DistributedVirtualPortgroup])
+
+        for i in obj:
+            print(i.summary)
+
+
+
     def del_dvPort_group(self, dv_port_name):
         # Deletes specific virtual portgroup
         content = self.retrieve_content()
