@@ -298,7 +298,7 @@ class vSphere:
 
         for i in obj:
             #print(i.summary)
-            dvportgroups['i.summary.name'] = str(i.summary.network).split(':')[-1][:-1]
+            dvportgroups[i.summary.name] = str(i.summary.network).split(':')[-1][:-1]
 
         return dvportgroups
 
