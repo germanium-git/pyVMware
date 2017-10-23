@@ -299,6 +299,7 @@ class vSphere:
             #print(i.summary)
             print("dvportgroup id:   {0}".format(i.summary.network).split(':')[-1][:-1])
             print("dvportgroup name: {0}".format(i.summary.name))
+            print('\n')
 
 
 
