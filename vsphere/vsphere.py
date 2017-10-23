@@ -292,14 +292,15 @@ class vSphere:
         """
         It searches for all portgroups
         """
+        dvportgroups = {}
         content = self.retrieve_content()
         obj = self.get_all(content, [vim.dvs.DistributedVirtualPortgroup])
 
         for i in obj:
             #print(i.summary)
-            print("dvportgroup id:   {0}".format(i.summary.network).split(':')[-1][:-1])
-            print("dvportgroup name: {0}".format(i.summary.name))
-            print('\n')
+            dvportgroups['i.summary.name'] = (i.summary.network).split(':')[-1][:-1]
+
+        return dvportgroups
 
 
 

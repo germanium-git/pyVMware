@@ -5,6 +5,8 @@ from vsphere import credentials
 from vsphere import seldc
 import sys
 
+from pprint import pprint
+
 # Select the vSphere to be modified
 inputs = 'inputs/vsphere_' + seldc(sys.argv[1:]) + '.yml'
 
@@ -14,4 +16,4 @@ cred = credentials(inputs)
 vmw = vSphere(*cred)
 
 # List all portgroups.
-vmw.list_portgroups()
+pprint(vmw.list_portgroups())
