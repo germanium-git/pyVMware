@@ -296,8 +296,7 @@ class vSphere:
         obj = self.get_all(content, [vim.dvs.DistributedVirtualPortgroup])
 
         for i in obj:
-            print(i.summary)
-            print('\n')
+            #print(i.summary)
             print("dvportgroup id:   {0}".format(i.summary.network).split(':')[-1][:-1])
             print("dvportgroup name: {0}".format(i.summary.name))
 
@@ -365,7 +364,6 @@ class vSphere:
             print("Host name:  {0}".format(i.summary.guest.hostName))
             print("IP address: {0}".format(i.summary.guest.ipAddress))
             print('\n')
-            #print(self.get_vm_id(content, [vim.VirtualMachine], i))
 
         #return obj
 
