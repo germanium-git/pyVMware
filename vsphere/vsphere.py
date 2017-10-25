@@ -304,6 +304,24 @@ class vSphere:
 
 
 
+    def list_dvswitch(self):
+        """
+        It searches for all distributed switches
+        """
+        dswitch = {}
+        content = self.retrieve_content()
+        obj = self.get_all(content, [vim.vim.DistributedVirtualSwitch])
+
+        for i in obj:
+            print(i.summary)
+            #dswitch[i.summary.name] = str(i.summary.network).split(':')[-1][:-1]
+
+        return dswitch
+
+
+
+
+
     def del_dvPort_group(self, dv_port_name):
         # Deletes specific virtual portgroup
         content = self.retrieve_content()
