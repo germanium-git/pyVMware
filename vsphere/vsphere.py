@@ -310,7 +310,7 @@ class vSphere:
         """
         dswitch = {}
         content = self.retrieve_content()
-        obj = self.get_all(content, [vim.vim.DistributedVirtualSwitch])
+        obj = self.get_all(content, [vim.DistributedVirtualSwitch])
 
         for i in obj:
             print(i.summary)
