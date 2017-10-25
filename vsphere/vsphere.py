@@ -314,7 +314,7 @@ class vSphere:
 
         for i in obj:
             print(i.summary)
-            #dswitch[i.summary.name] = str(i.summary.network).split(':')[-1][:-1]
+            dswitch[i.summary.name] = {'uuid': i.summary.uuid, 'portgroups': i.summary.portgroupName}
 
         return dswitch
 
