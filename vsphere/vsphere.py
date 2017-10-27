@@ -333,8 +333,8 @@ class vSphere:
         for i in obj:
             #print(i.summary)
             pg_list = []
-            for i in range(len(i.summary.portgroupName)):
-                pg_list.append(i.summary.portgroupName[i])
+            for j in range(len(i.summary.portgroupName)):
+                pg_list.append(i.summary.portgroupName[j])
             dswitch[i.summary.name] = {'uuid': i.summary.uuid, 'portgroups': i.summary.portgroupName}
 
         return dswitch
