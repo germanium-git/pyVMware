@@ -18,10 +18,11 @@ vmw = vSphere(*cred)
 # Retrieve all distributed switches
 dsw = vmw.list_dvswitch()
 
-# Retrieve all portgroups.
+# Retrieve all portgroups
 pgdir = vmw.list_portgroups()
 
+# Resolve dvs_id to dvs_name and add it to dictionary
 for pg in pgdir:
-    pgdir[pg]['dvsname'] = dsw[pgdir[pg]['dvs_id']['name']]
+    pgdir[pg]['dvsname'] = dsw[pgdir[pg]['dvs_id']]['name']
 
 pprint(pgdir)
