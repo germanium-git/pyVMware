@@ -205,6 +205,9 @@ class vSphere:
             print('VLAN ID not found')
         return dupplicate
 
+
+
+
     def find_dvSwitch(self, dwswname):
         """
         It searches for specific VLAN-ID on a specific distributed switch
@@ -290,15 +293,18 @@ class vSphere:
 
     def list_portgroups(self):
         """
-        It searches for all portgroups
+        It provides a directory of all portgroups, VLANs
         """
         dvportgroups = {}
         content = self.retrieve_content()
         obj = self.get_all(content, [vim.dvs.DistributedVirtualPortgroup])
 
         for i in obj:
-            #print(i.summary)
-            dvportgroups[i.summary.name] = str(i.summary.network).split(':')[-1][:-1]
+            name = i.summary.name
+            id = str(i.summary.network).split(':')[-1][:-1]
+            vlan = i.config.defaultPortConfig.vlan.vlanId
+            print(type(vlan))
+            dvportgroups[name] = {'id': id, 'vlan': vlan}
 
         return dvportgroups
 
