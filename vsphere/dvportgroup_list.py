@@ -22,6 +22,6 @@ dsw = vmw.list_dvswitch()
 pgdir = vmw.list_portgroups()
 
 for pg in pgdir:
-    pgdir[pg]['dvsname'] = dsw[pgdir[pg]['dvs']['name']]
+    pgdir[pg]['dvsname'] = dsw[pgdir[pg]['dvs_id']['name']]
 
 pprint(pgdir)
