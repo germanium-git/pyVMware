@@ -332,10 +332,12 @@ class vSphere:
 
         for i in obj:
             dvs = str(i).split(':')[-1][:-1]
+            """
             pg_list = []
             for j in range(len(i.summary.portgroupName)):
                 pg_list.append(i.summary.portgroupName[j])
-            dswitch[i.summary.name] = {'uuid': i.summary.uuid, 'portgroups': i.summary.portgroupName, 'dvs': dvs}
+            """
+            dswitch[dvs] = {'name': i.summary.name, 'uuid': i.summary.uuid}
 
         return dswitch
 

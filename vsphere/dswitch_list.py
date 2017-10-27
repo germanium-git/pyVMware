@@ -21,6 +21,7 @@ dsw = vmw.list_dvswitch()
 for s in dsw:
     print('\n')
     print s
+    print dsw[s]['dvs']
     print dsw[s]['uuid']
     for pg in dsw[s]['portgroups']:
         print pg
