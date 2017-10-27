@@ -4,6 +4,7 @@ from vsphere import vSphere
 from vsphere import credentials
 from vsphere import seldc
 import sys
+from pprint import pprint
 
 
 # Select the vSphere instance
@@ -15,5 +16,6 @@ cred = credentials(inputs)
 vmw = vSphere(*cred)
 
 
-# List all VMs and display IP, hostname etc..
-vmw.list_vm()
+# List all VMs and display id, uuid, IP, hostname etc..
+VMs = vmw.list_vm()
+pprint(VMs)

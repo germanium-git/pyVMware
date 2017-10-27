@@ -399,16 +399,12 @@ class vSphere:
         """
         content = self.retrieve_content()
         obj = self.get_all(content, [vim.VirtualMachine])
+        vmdir = {}
 
         for i in obj:
-            #print(self.get_vm_id(content, [vim.VirtualMachine], i))
-            print('\n')
-            print("VM-id:      {0}".format(str(i).split(':')[-1][:-1]))
-            print("VM name:    {0}".format(i.summary.config.name))
-            print("UUID:       {0}".format(i.summary.config.uuid))
-            print("Host name:  {0}".format(i.summary.guest.hostName))
-            print("IP address: {0}".format(i.summary.guest.ipAddress))
-            print('\n')
+            vmdir[i.summary.config.name] = {'vm-id': str(i).split(':')[-1][:-1], 'uuid': i.summary.config.uuid,
+                                            'hostname': i.summary.guest.hostName, 'ip': i.summary.guest.ipAddress}
 
-        #return obj
+
+        return vmdir
 
