@@ -302,9 +302,20 @@ class vSphere:
         for i in obj:
             name = i.summary.name
             id = str(i.summary.network).split(':')[-1][:-1]
-            vlan = i.config.defaultPortConfig.vlan.vlanId
-            print(type(vlan))
-            dvportgroups[name] = {'id': id, 'vlan': vlan}
+            try:
+                vlan = i.config.defaultPortConfig.vlan.vlanId
+                # vlan-id is referred to data type integer
+                # vlan-range is referred to data type class 'pyVmomi.VmomiSupport.vim.NumericRange[]'
+                if type(vlan) != int:
+                    vlan = 'NumericRange'
+            except:
+                vlan = 'N/A'
+            try:
+                pvlan = i.config.defaultPortConfig.vlan.pvlanId
+            except:
+                pvlan = 'N/A'
+
+            dvportgroups[name] = {'id': id, 'vlan': vlan, 'pvlan': pvlan}
 
         return dvportgroups
 
