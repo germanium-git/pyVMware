@@ -365,7 +365,16 @@ class vSphere:
         """
         content = self.retrieve_content()
         obj = self.get_obj(content, [vim.VirtualMachine], vmname)
-        return obj
+
+        vm = {}
+        try:
+            vm[obj.summary.config.name] = {'vm-id': str(obj).split(':')[-1][:-1], 'uuid': obj.summary.config.uuid,
+                                            'hostname': obj.summary.guest.hostName, 'ip': obj.summary.guest.ipAddress}
+        except:
+            vm = {}
+            print('\nVM not found')
+
+        return vm
 
 
 
