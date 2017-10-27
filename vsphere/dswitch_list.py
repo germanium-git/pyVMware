@@ -16,4 +16,11 @@ cred = credentials(inputs)
 vmw = vSphere(*cred)
 
 # List all portgroups.
-pprint(vmw.list_dvswitch())
+dsw = vmw.list_dvswitch()
+
+for s in dsw:
+    print('\n')
+    print s
+    print dsw[s]['uuid']
+    for pg in dsw[s]['portgroups']:
+        print pg

@@ -330,7 +330,10 @@ class vSphere:
         obj = self.get_all(content, [vim.DistributedVirtualSwitch])
 
         for i in obj:
-            print(i.summary)
+            #print(i.summary)
+            pg_list = []
+            for i range(len(i.summary.portgroupName)):
+                pg_list.append(i.summary.portgroupName[i])
             dswitch[i.summary.name] = {'uuid': i.summary.uuid, 'portgroups': i.summary.portgroupName}
 
         return dswitch
