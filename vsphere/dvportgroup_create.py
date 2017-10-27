@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-from vsphere import vSphere
+from vsphere import Vsphere
 from vsphere import credentials
 from vsphere import seldc
 from vsphere import dvswitch
@@ -49,7 +49,7 @@ if agree != "Y" and agree != "y":
 else:
     # Create an instance of Class vSphere
     cred = credentials(inputs)
-    vmw = vSphere(*cred)
+    vmw = Vsphere(*cred)
 
     # Check if the port group already exist and the VLAN is not assigned to other port groups
     if not (vmw.find_dvportgroup(dportgroup) or vmw.find_vlan(dswitch['name'], vlanid)):

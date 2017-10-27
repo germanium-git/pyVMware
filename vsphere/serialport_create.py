@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-from vsphere import vSphere
+from vsphere import Vsphere
 from vsphere import credentials
 from vsphere import seldc
 import sys
@@ -34,7 +34,7 @@ if agree != "Y" and agree != "y":
 else:
     # Create an instance of Class vSphere
     cred = credentials(inputs)
-    vmw = vSphere(*cred)
+    vmw = Vsphere(*cred)
 
     # Create serial port
     if vmw.find_vm(vm_name):

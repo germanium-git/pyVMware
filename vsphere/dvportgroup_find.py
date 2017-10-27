@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-from vsphere import vSphere
+from vsphere import Vsphere
 from vsphere import credentials
 from vsphere import seldc
 import sys
@@ -13,7 +13,7 @@ dportgroup = raw_input("Distributed port group: ")
 
 # Create an instance of Class vSphere
 cred = credentials(inputs)
-vmw = vSphere(*cred)
+vmw = Vsphere(*cred)
 
 # Check if the port group already exist
 vmw.find_dvportgroup(dportgroup)

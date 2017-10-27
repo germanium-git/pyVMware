@@ -6,8 +6,8 @@ from pyVmomi import vim, vmodl
 import time
 import yaml
 import getpass
-import sys, getopt
-
+import sys
+import getopt
 
 
 from os import listdir
@@ -15,18 +15,18 @@ from os.path import isfile, join
 
 
 # Specify the common inventory folder
-mypath = 'inputs'
+my_path = 'inputs'
 
 
-def getiventories(mypath):
+def getiventories(inv_path):
     """
-    :param mypath: Path to inventory files
+    :param my_path: Path to inventory files
     :return:       List of local inventories - useful for help
     """
-    onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+    onlyfiles = [f for f in listdir(inv_path) if isfile(join(inv_path, f))]
     inv_list = []
-    for file in onlyfiles:
-        inv_list.append(file.split('_')[-1][:-4])
+    for fi in onlyfiles:
+        inv_list.append(fi.split('_')[-1][:-4])
     return inv_list
 
 
@@ -48,19 +48,19 @@ def seldc(argv):
             print 'Use this script with inventory parameter'
             print(' -i myvmware - for MyVMware lab ')
             sys.exit()
-        elif opt in ("-i"):
-            if arg in getiventories(mypath):
+        elif opt in "-i":
+            if arg in getiventories(my_path):
                 inp = arg
             else:
                 print('Invalid argument')
-                print('Only these inventories are valid: ', getiventories(mypath))
+                print('Only these inventories are valid: ', getiventories(my_path))
                 sys.exit()
-    if not(opts):
+    if not opts:
         print 'Use this script with the parameter e.g.:'
         print 'python <script>.py -i <DC>'
         print 'python <script>.py -h for more information'
         sys.exit()
-    inp = mypath + '/vsphere_' + inp + '.yml'
+    inp = my_path + '/vsphere_' + inp + '.yml'
     return inp
 
 
@@ -76,7 +76,6 @@ def credentials(inputfile):
     account = raw_input("Account [%s]: " % vm_cred['account']) or vm_cred['account']
     if 'passw' in vm_cred:
         passw = getpass.getpass(prompt='Use the stored password or enter new one: ', stream=None) or vm_cred['passw']
-        passw = vm_cred['passw']
     else:
         passw = 'None'
         while passw == 'None' or passw == '':
@@ -104,7 +103,7 @@ def dvswitch(inputfile):
     return dswitch
 
 
-class vSphere:
+class Vsphere:
 
     def __init__(self, vsphere_ip, login, pswd):
         self.vsphere_ip = vsphere_ip
@@ -144,7 +143,7 @@ class vSphere:
 
     def get_all(self, content, vimtype):
         """
-        Get the vsphere object associated with a given text name
+        Get the vsphere objects associated with a given type
         """
         recursive = True  # whether we should look into it recursively
         container = content.viewManager.CreateContainerView(content.rootFolder, vimtype, recursive)
@@ -153,6 +152,9 @@ class vSphere:
 
 
     def retrieve_content(self):
+        """
+        Establish SSL session to vSphere and retrieve the content
+        """
         context = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
         context.verify_mode = ssl.CERT_NONE
         si = None
@@ -173,20 +175,19 @@ class vSphere:
         """
         It searches for specific distributed port-group on all distributed switches
         """
-
         content = self.retrieve_content()
-        dupplicate = False
+        duplicate = False
         obj = self.get_obj(content, [vim.DistributedVirtualPortgroup], dvpgname)
-        # List all VLANs derfined for each distributed switch
+        # List all VLANs defined for each distributed switch
         # print(obj.summary)
         # Check if object exists
         if obj and obj.summary.name == dvpgname:
             print('The distributed port {0} group exists'.format(dvpgname))
             print(str(obj.summary.network)).replace('vim.dvs.DistributedVirtualPortgroup:', '')
-            dupplicate = True
+            duplicate = True
         else:
             print('Distributed Port Group not found')
-        return dupplicate
+        return duplicate
 
 
     def find_vlan(self, dwswname, vlan):
@@ -197,15 +198,15 @@ class vSphere:
 
         obj = self.get_obj(content, [vim.DistributedVirtualSwitch], dwswname)
         # print(obj.QueryUsedVlanIdInDvs())
-        # List all VLANs derfined for each distributed switch
-        dupplicate = False
+        # List all VLANs defined for each distributed switch
+        duplicate = False
         for i in obj.QueryUsedVlanIdInDvs():
             if i == int(vlan):
                 print('The VLAN {0} exists'.format(vlan))
-                dupplicate = True
-        if not dupplicate:
+                duplicate = True
+        if not duplicate:
             print('VLAN ID not found')
-        return dupplicate
+        return duplicate
 
 
 
@@ -282,6 +283,7 @@ class vSphere:
         else:
             dv_pg_spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.inherited = True
 
+        # Specify teaming policy and name of the standby uplink
         #dv_pg_spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.standbyUplinkPort = 'Unset'
         #dv_pg_spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.standbyUplinkPort[0] = "dvUplink2"
         #dv_pg_spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.standbyUplinkPort[1] = "dvUplink4"

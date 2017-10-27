@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-from vsphere import vSphere
+from vsphere import Vsphere
 from vsphere import credentials
 from vsphere import seldc
 from vsphere import dvswitch
@@ -17,7 +17,7 @@ dswitch = dvswitch(inputs)
 dportgroup = raw_input("Distributed port group to be deleted: ")
 
 cred = credentials(inputs)
-vmw = vSphere(*cred)
+vmw = Vsphere(*cred)
 
 # Check if the port group exist
 if not vmw.find_dvportgroup(dportgroup):
@@ -32,7 +32,7 @@ else:
     agree = raw_input("Do you want to apply these changes? y/n[N]: " or 'N')
 
 
-    # Proceed with updating configuration
+# Proceed with updating configuration
     if agree != "Y" and agree != "y":
         print("Script execution canceled")
         sys.exit(1)
