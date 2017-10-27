@@ -300,7 +300,7 @@ class vSphere:
         obj = self.get_all(content, [vim.dvs.DistributedVirtualPortgroup])
 
         for i in obj:
-            dswitch = i.config.distributedVirtualSwitch
+            dvs = str(i.config.distributedVirtualSwitch).split(':')[-1][:-1]
             name = i.summary.name
             id = str(i.summary.network).split(':')[-1][:-1]
             try:
@@ -316,7 +316,7 @@ class vSphere:
             except:
                 pvlan = 'N/A'
 
-            dvportgroups[name] = {'id': id, 'vlan': vlan, 'pvlan': pvlan, 'dswitch': dswitch}
+            dvportgroups[name] = {'id': id, 'vlan': vlan, 'pvlan': pvlan, 'dvs': dvs}
 
         return dvportgroups
 
@@ -331,11 +331,11 @@ class vSphere:
         obj = self.get_all(content, [vim.DistributedVirtualSwitch])
 
         for i in obj:
-            #print(i.summary)
+            dvs = str(i).split(':')[-1][:-1]
             pg_list = []
             for j in range(len(i.summary.portgroupName)):
                 pg_list.append(i.summary.portgroupName[j])
-            dswitch[i.summary.name] = {'uuid': i.summary.uuid, 'portgroups': i.summary.portgroupName}
+            dswitch[i.summary.name] = {'uuid': i.summary.uuid, 'portgroups': i.summary.portgroupName, 'dvs': dvs}
 
         return dswitch
 
