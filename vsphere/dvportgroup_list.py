@@ -15,5 +15,13 @@ inputs = 'inputs/vsphere_' + seldc(sys.argv[1:]) + '.yml'
 cred = credentials(inputs)
 vmw = vSphere(*cred)
 
-# List all portgroups.
-pprint(vmw.list_portgroups())
+# Retrieve all distributed switches
+dsw = vmw.list_dvswitch()
+
+# Retrieve all portgroups.
+pgdir = vmw.list_portgroups()
+
+for pg in pgdir:
+    pgdir[pg]['name'] = dsw[pgdir[pg]['dvs']]
+
+pprint(pgdir)

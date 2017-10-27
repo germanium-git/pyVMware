@@ -15,13 +15,7 @@ inputs = 'inputs/vsphere_' + seldc(sys.argv[1:]) + '.yml'
 cred = credentials(inputs)
 vmw = vSphere(*cred)
 
-# List all portgroups.
+# List of all distributed switches
 dsw = vmw.list_dvswitch()
 
-for s in dsw:
-    print('\n')
-    print s
-    print dsw[s]['dvs']
-    print dsw[s]['uuid']
-    for pg in dsw[s]['portgroups']:
-        print pg
+pprint(dsw)
