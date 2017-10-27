@@ -6,7 +6,7 @@ from vsphere import seldc
 import sys
 
 # Select the vSphere to be modified
-inputs = 'inputs/vsphere_' + seldc(sys.argv[1:]) + '.yml'
+inputs = seldc(sys.argv[1:])
 
 # Specify manually the distributed port group to be created
 dportgroup = raw_input("Distributed port group: ")

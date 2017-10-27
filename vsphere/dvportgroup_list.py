@@ -8,7 +8,7 @@ import sys
 from pprint import pprint
 
 # Select the vSphere to be modified
-inputs = 'inputs/vsphere_' + seldc(sys.argv[1:]) + '.yml'
+inputs = seldc(sys.argv[1:])
 
 
 # Create an instance of Class vSphere

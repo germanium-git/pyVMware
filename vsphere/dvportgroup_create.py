@@ -8,7 +8,7 @@ import sys
 from termcolor import cprint
 
 # Select the vSphere to be modified
-inputs = 'inputs/vsphere_' + seldc(sys.argv[1:]) + '.yml'
+inputs = seldc(sys.argv[1:])
 
 # Get the name of distributed switch, banner and active uplink in teaming policy
 # specified in the inventory *.yml file

@@ -8,7 +8,7 @@ import sys
 from termcolor import cprint
 
 # Read the credentials for vSphere from YAML file and input dialog
-inputs = 'inputs/vsphere_' + seldc(sys.argv[1:]) + '.yml'
+inputs = seldc(sys.argv[1:])
 
 # It returns the name of distributed switch, banner and active uplink in teaming policy
 dswitch = dvswitch(inputs)
