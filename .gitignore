@@ -1,7 +1,10 @@
 .gitattributes
 .idea/*
-vsphere/inputs/vsphere_nogit.yml
+*.pyc
+
+vsphere/inputs/*
+!vsphere/inputs/vsphere_myvmware.yml
+
 
 
 .idea/
-

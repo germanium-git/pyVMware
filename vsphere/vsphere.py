@@ -13,15 +13,16 @@ import sys, getopt
 from os import listdir
 from os.path import isfile, join
 
-# Specify the inventory folder
+
+# Specify the common inventory folder
 mypath = 'inputs'
+
 
 def getiventories(mypath):
     """
-    :param argv: Path to inventory files
-    :return:     list of inventories
+    :param mypath: Path to inventory files
+    :return:       List of local inventories - useful for help
     """
-
     onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
     inv_list = []
     for file in onlyfiles:
@@ -31,12 +32,12 @@ def getiventories(mypath):
 
 def seldc(argv):
     """
-    :param argv: Command line argumets
+    :param argv: Command line arguments
     :return:     Name of the inventory file
     """
     inp = ''
     try:
-        opts, args = getopt.getopt(argv,"hi:")
+        opts, args = getopt.getopt(argv, "hi:")
     except getopt.GetoptError:
         print 'Use this script with the parameter e.g.:'
         print 'python <script>.py -i <DC>'
@@ -59,6 +60,7 @@ def seldc(argv):
         print 'python <script>.py -i <DC>'
         print 'python <script>.py -h for more information'
         sys.exit()
+    inp = mypath + '/vsphere_' + inp + '.yml'
     return inp
 
 

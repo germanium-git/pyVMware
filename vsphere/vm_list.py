@@ -5,13 +5,15 @@ from vsphere import credentials
 from vsphere import seldc
 import sys
 
-# Select the vSphere to be modified
-inputs = 'inputs/vsphere_' + seldc(sys.argv[1:]) + '.yml'
+
+# Select the vSphere instance
+inputs = seldc(sys.argv[1:])
 
 
 # Create an instance of Class vSphere
 cred = credentials(inputs)
 vmw = vSphere(*cred)
+
 
 # List all VMs and display IP, hostname etc..
 vmw.list_vm()
