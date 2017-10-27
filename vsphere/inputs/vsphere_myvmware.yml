@@ -5,6 +5,8 @@
   # Password is optional. Comment it and enter the password in input dialog.
   passw: my_password
 
+  banner: You are doing some changes in Mylab
+
   # Specify the switch the distributed port groups will be created
   dswitch: switchname
   actuplink: uplinkname
