@@ -9,4 +9,7 @@
 
   # Specify the switch the distributed port groups will be created
   dswitch: switchname
-  actuplink: uplinkname
+  # Specify active uplink interfaces or comment it to inherit the implicit distributed switch's setting
+  #actuplink:
+  #    - Uplink 1
+  #    - Uplink 2

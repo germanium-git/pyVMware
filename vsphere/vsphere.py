@@ -363,7 +363,7 @@ class Vsphere:
 
     def find_vm(self, vmname):
         """
-        It searches for specific VM
+        It searches for specific VM and returns directory
         """
         content = self.retrieve_content()
         obj = self.get_obj(content, [vim.VirtualMachine], vmname)
@@ -377,6 +377,17 @@ class Vsphere:
             print('\nVM not found')
 
         return vm
+
+
+
+    def find_vm_getobj(self, vmname):
+        """
+        It searches for specific VM and returns the object of the VM
+        """
+        content = self.retrieve_content()
+        obj = self.get_obj(content, [vim.VirtualMachine], vmname)
+
+        return obj
 
 
 
@@ -399,7 +410,7 @@ class Vsphere:
         spec = vim.vm.ConfigSpec()
         spec.deviceChange = dev_changes
 
-        vm = self.find_vm(vmname)
+        vm = self.find_vm_getobj(vmname)
         task = vm.ReconfigVM_Task(spec)
         self.wait_for_task(task)
 
