@@ -58,5 +58,16 @@ $ ./vm_find.py -i myvmware
 ```
 It retrieves the specific VMs, its uuid, vm-ID, and if VMware tools are installed also about the hostname and IP address.
 
+##### serialport_create.py
+
+```sh.
+$ ./serialport_create.py -i myvmware
+```
+It adds serial port to an existing VM.
+
+
+More information on how to use the some of those scripts can be found on https://germanium.cz/domains/germanium.cz/2017/10/04/nsx-pe-deployment-automation-part-1/
+
+
 
 
