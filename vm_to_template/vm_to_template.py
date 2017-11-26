@@ -80,7 +80,8 @@ def main():
         host=args.host,
         user=args.user,
         pwd=args.password,
-        port=args.port)
+        port=args.port,
+        sslContext=context)
     # disconnect this thing
     atexit.register(Disconnect, si)
 
