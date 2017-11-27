@@ -3,7 +3,7 @@
 from pyVmomi import vim
 from pyVim.connect import SmartConnect, Disconnect
 import atexit
-from add_serial.tools import tasks
+#from add_serial.tools import tasks
 import argparse
 import getpass
 import ssl
@@ -69,7 +69,6 @@ def get_obj(content, vimtype, name):
             obj = c
             break
     return obj
-
 
 
 def main():
