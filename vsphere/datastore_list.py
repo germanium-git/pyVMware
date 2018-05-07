@@ -5,6 +5,7 @@
    Author:          Petr Nemec
    Description:     Identify storage appliances dedicated for the NSX edge clusters
                     The clusters are identified by static 'NSX' string as a part of the name
+                    It filters out the subset of all datastores available at each host
    Date:            2018-05-07
 ===================================================================================================
 """

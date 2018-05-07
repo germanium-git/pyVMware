@@ -84,7 +84,6 @@ def credentials(inputfile):
     return vsphere_ip, account, passw
 
 
-
 def dvswitch(inputfile):
     # Import attributes specifying the distributed switch where distributed port groups are to be created
     # Also the teaming policy - active uplink is read from YAML file
@@ -110,8 +109,6 @@ class Vsphere:
         self.login = login
         self.pswd = pswd
 
-
-
     def get_vm_id(self, content, vimtype, objid):
         """
         Get the VM associated with a given id - 'vim.VirtualMachine:vm-18'
@@ -124,7 +121,6 @@ class Vsphere:
                 obj = c
                 break
         return obj
-
 
     def get_host_byid(self, objid):
         """
@@ -157,8 +153,6 @@ class Vsphere:
                 break
         return obj
 
-
-
     def get_obj(self, content, vimtype, name):
         """
         Get the vsphere object associated with a given text name
@@ -172,8 +166,6 @@ class Vsphere:
                 break
         return obj
 
-
-
     def get_all(self, content, vimtype):
         """
         Get the vsphere objects associated with a given type
@@ -181,8 +173,6 @@ class Vsphere:
         recursive = True  # whether we should look into it recursively
         container = content.viewManager.CreateContainerView(content.rootFolder, vimtype, recursive)
         return container.view
-
-
 
     def retrieve_content(self):
         """
@@ -203,7 +193,6 @@ class Vsphere:
         content = si.RetrieveContent()
         return content
 
-
     def find_dvportgroup(self, dvpgname):
         """
         It searches for specific distributed port-group on all distributed switches
@@ -221,7 +210,6 @@ class Vsphere:
         else:
             print('Distributed Port Group not found')
         return duplicate
-
 
     def find_vlan(self, dwswname, vlan):
         """
@@ -241,9 +229,6 @@ class Vsphere:
             print('VLAN ID not found')
         return duplicate
 
-
-
-
     def find_dvSwitch(self, dwswname):
         """
         It searches for specific VLAN-ID on a specific distributed switch
@@ -251,8 +236,6 @@ class Vsphere:
         content = self.retrieve_content()
         obj = self.get_obj(content, [vim.DistributedVirtualSwitch], dwswname)
         return obj
-
-
 
     def wait_for_task(self, task, actionName='job', hideResult=False):
         """
@@ -274,8 +257,6 @@ class Vsphere:
             raise task.info.error
 
         return task.info.result
-
-
 
     def add_dvPort_group(self, dvswname, dv_port_name, vlan_id, *args):
         """
@@ -302,7 +283,6 @@ class Vsphere:
         dv_pg_spec.defaultPortConfig.securityPolicy.macChanges = vim.BoolPolicy(value=True)
         dv_pg_spec.defaultPortConfig.securityPolicy.inherited = False
 
-
         # Specify teaming policy and name of the active uplink
         # Configure active uplink ports
         if args:
@@ -317,9 +297,9 @@ class Vsphere:
             dv_pg_spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.inherited = True
 
         # Specify teaming policy and name of the standby uplink
-        #dv_pg_spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.standbyUplinkPort = 'Unset'
-        #dv_pg_spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.standbyUplinkPort[0] = "dvUplink2"
-        #dv_pg_spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.standbyUplinkPort[1] = "dvUplink4"
+        # dv_pg_spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.standbyUplinkPort = 'Unset'
+        # dv_pg_spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.standbyUplinkPort[0] = "dvUplink2"
+        # dv_pg_spec.defaultPortConfig.uplinkTeamingPolicy.uplinkPortOrder.standbyUplinkPort[1] = "dvUplink4"
 
         dv_switch = self.find_dvSwitch(dvswname)
 
@@ -327,7 +307,6 @@ class Vsphere:
         self.wait_for_task(task)
         print("Successfully created DV Port Group {0}".format(dv_port_name))
         
-
     def list_portgroups(self):
         """
         It provides a directory of all portgroups, VLANs
@@ -354,10 +333,7 @@ class Vsphere:
                 pvlan = 'N/A'
 
             dvportgroups[name] = {'id': id, 'vlan': vlan, 'pvlan': pvlan, 'dvs_id': dvs_id}
-
         return dvportgroups
-
-
 
     def list_dvswitch(self):
         """
@@ -378,7 +354,6 @@ class Vsphere:
 
         return dswitch
 
-
     def list_clusters(self):
         """
         It lists all compute NSX-dedicated clusters
@@ -387,7 +362,7 @@ class Vsphere:
         content = self.retrieve_content()
         obj = self.get_all(content, [vim.ClusterComputeResource])
         for i in obj:
-            if "NSX" in i.name:
+            if ("NSX" in i.name) or ("nsx" in i.name):
                 # domain-id
                 # print(str(i).split(':')[-1][:-1])
                 # name
@@ -402,7 +377,6 @@ class Vsphere:
                                     'hosts': hosts}
         return clusters
 
-
     def find_cluster(self, clustername):
         """
         It searches for specific domain-id on a specific cluster
@@ -413,11 +387,14 @@ class Vsphere:
         cluster['name'] = clustername
         cluster['id'] = str(obj).split(':')[-1][:-1]
         hosts = []
+        datastores = []
         for i in obj.host:
             hosts.append(str(i).split(':')[-1][:-1])
+        for j in obj.datastore:
+            datastores.append(str(j).split(':')[-1][:-1])
         cluster['hosts'] = hosts
+        cluster['datastores'] = datastores
         return cluster
-
 
     def list_hosts(self):
         """
@@ -442,7 +419,6 @@ class Vsphere:
                                                  'datastores': datastores}
         return hosts
 
-
     def list_datastores(self):
         """
         It searches for all datastores
@@ -459,7 +435,6 @@ class Vsphere:
             datastores[str(i).split(':')[-1][:-1]] = i.name
         return datastores
 
-
     def find_dvSwitch(self, dwswname):
             """
             It searches for specific VLAN-ID on a specific distributed switch
@@ -467,7 +442,6 @@ class Vsphere:
             content = self.retrieve_content()
             obj = self.get_obj(content, [vim.Datastore], dwswname)
             return obj
-
 
     def get_storage_id(self, content, vimtype, objid):
         """
@@ -485,8 +459,6 @@ class Vsphere:
                 break
         return obj
 
-
-
     def del_dvPort_group(self, dv_port_name):
         # Deletes specific virtual portgroup
         content = self.retrieve_content()
@@ -496,8 +468,6 @@ class Vsphere:
             self.wait_for_task(task)
         else:
             print("The specified distributed port group doesn't exist")
-
-
 
     def find_vm(self, vmname):
         """
@@ -516,8 +486,6 @@ class Vsphere:
 
         return vm
 
-
-
     def find_vm_getobj(self, vmname):
         """
         It searches for specific VM and returns the object of the VM
@@ -526,8 +494,6 @@ class Vsphere:
         obj = self.get_obj(content, [vim.VirtualMachine], vmname)
 
         return obj
-
-
 
     def add_telnet(self, vmname, port):
         serial_spec = vim.vm.device.VirtualDeviceSpec()
@@ -552,7 +518,6 @@ class Vsphere:
         task = vm.ReconfigVM_Task(spec)
         self.wait_for_task(task)
 
-
     def list_vm(self):
         """
         It searches for all VMs
@@ -564,7 +529,6 @@ class Vsphere:
         for i in obj:
             vmdir[i.summary.config.name] = {'vm-id': str(i).split(':')[-1][:-1], 'uuid': i.summary.config.uuid,
                                             'hostname': i.summary.guest.hostName, 'ip': i.summary.guest.ipAddress}
-
 
         return vmdir
 
