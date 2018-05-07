@@ -86,7 +86,7 @@ def credentials(inputfile):
 
 
 def dvswitch(inputfile):
-    # Import attributes specifying the distributed switch where distributed port groups are to be creted
+    # Import attributes specifying the distributed switch where distributed port groups are to be created
     # Also the teaming policy - active uplink is read from YAML file
     with open(inputfile, 'r') as f:
         s = f.read()
@@ -124,6 +124,39 @@ class Vsphere:
                 obj = c
                 break
         return obj
+
+
+    def get_host_byid(self, objid):
+        """
+        Get the Host associated with a given id - 'vim.HostSystem:host-1118''
+        """
+        content = self.retrieve_content()
+        recursive = True  # whether we should look into it recursively
+        obj = None
+        container = content.viewManager.CreateContainerView(content.rootFolder, [vim.HostSystem], recursive)
+        for c in container.view:
+            # print(str(c.summary.host).split(':')[-1][:-1])
+            # print(c.summary.config.name)
+            if str(c.summary.host).split(':')[-1][:-1] == objid:
+                # print(str(c.summary.host).split(':')[-1])
+                obj = str(c.summary.config.name)
+                break
+        return obj
+
+    def get_datastore_byid(self, objid):
+        """
+        Get the Host associated with a given id - 'vim.HostSystem:host-1118''
+        """
+        content = self.retrieve_content()
+        recursive = True  # whether we should look into it recursively
+        obj = None
+        container = content.viewManager.CreateContainerView(content.rootFolder, [vim.Datastore], recursive)
+        for c in container.view:
+            if (str(c).split(':')[-1][:-1]) == objid:
+                obj = c.summary.name
+                break
+        return obj
+
 
 
     def get_obj(self, content, vimtype, name):
@@ -346,6 +379,111 @@ class Vsphere:
         return dswitch
 
 
+    def list_clusters(self):
+        """
+        It lists all compute NSX-dedicated clusters
+        """
+        clusters = {}
+        content = self.retrieve_content()
+        obj = self.get_all(content, [vim.ClusterComputeResource])
+        for i in obj:
+            if "NSX" in i.name:
+                # domain-id
+                # print(str(i).split(':')[-1][:-1])
+                # name
+                # print(i.name)
+                # all datastores available to a cluster
+                # print(i.datastore)
+                hosts = []
+                for j in range(len(i.host)):
+                    # print(str(i.host[j]).split(':')[-1][:-1])
+                    hosts.append(str(i.host[j]).split(':')[-1][:-1])
+                clusters[i.name] = {'domain': str(i).split(':')[-1][:-1],
+                                    'hosts': hosts}
+        return clusters
+
+
+    def find_cluster(self, clustername):
+        """
+        It searches for specific domain-id on a specific cluster
+        """
+        cluster = {}
+        content = self.retrieve_content()
+        obj = self.get_obj(content, [vim.ClusterComputeResource], clustername)
+        cluster['name'] = clustername
+        cluster['id'] = str(obj).split(':')[-1][:-1]
+        hosts = []
+        for i in obj.host:
+            hosts.append(str(i).split(':')[-1][:-1])
+        cluster['hosts'] = hosts
+        return cluster
+
+
+    def list_hosts(self):
+        """
+        It searches for all hosts
+        """
+        hosts = {}
+        content = self.retrieve_content()
+        obj = self.get_all(content, [vim.HostSystem])
+
+        for i in obj:
+            # host-id
+            # print(str(i).split(':')[-1][:-1])
+            # name
+            # print(i.name)
+            # all datastores available to a host
+            # print(i.datastore)
+            datastores = []
+            for j in range(len(i.datastore)):
+                # print(str(i.host[j]).split(':')[-1][:-1])
+                datastores.append(str(i.datastore[j]).split(':')[-1][:-1])
+            hosts[str(i).split(':')[-1][:-1]] = {'name': i.name,
+                                                 'datastores': datastores}
+        return hosts
+
+
+    def list_datastores(self):
+        """
+        It searches for all datastores
+        """
+        datastores = {}
+        content = self.retrieve_content()
+        obj = self.get_all(content, [vim.Datastore])
+
+        for i in obj:
+            # datastore-id
+            # print(str(i).split(':')[-1][:-1])
+            # name
+            # print(i.name)
+            datastores[str(i).split(':')[-1][:-1]] = i.name
+        return datastores
+
+
+    def find_dvSwitch(self, dwswname):
+            """
+            It searches for specific VLAN-ID on a specific distributed switch
+            """
+            content = self.retrieve_content()
+            obj = self.get_obj(content, [vim.Datastore], dwswname)
+            return obj
+
+
+    def get_storage_id(self, content, vimtype, objid):
+        """
+        Get the Host associated with a given id - 'vim.HostSystem:host-1118''
+        """
+        recursive = True  # whether we should look into it recursively
+        obj = None
+        container = content.viewManager.CreateContainerView(content.rootFolder, vimtype, recursive)
+        for c in container.view:
+            # print(str(c.summary.host).split(':')[-1][:-1])
+            # print(c.summary.config.name)
+            if str(c.summary.host).split(':')[-1][:-1] == objid:
+                # print(str(c.summary.host).split(':')[-1])
+                obj = str(c.summary.config.name)
+                break
+        return obj
 
 
 
