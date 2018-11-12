@@ -161,6 +161,8 @@ class Vsphere:
         obj = None
         container = content.viewManager.CreateContainerView(content.rootFolder, vimtype, recursive)
         for c in container.view:
+            # print c
+            # print c.name
             if c.name == name:
                 obj = c
                 break
@@ -532,3 +534,18 @@ class Vsphere:
 
         return vmdir
 
+    def get_cluster_object(self, clustername):
+        """
+        It searches for a specific cluster
+        """
+        content = self.retrieve_content()
+        obj = self.get_obj(content, [vim.ClusterComputeResource], clustername)
+        return obj
+
+    def get_vm_object(self, vmname):
+        """
+        It searches for a specific VM
+        """
+        content = self.retrieve_content()
+        obj = self.get_obj(content, [vim.VirtualMachine], vmname)
+        return obj
