@@ -17,7 +17,7 @@ cred = credentials(inputs)
 vmw = Vsphere(*cred)
 
 
-# Specify manually the VM Group, the name of the VM to be added to the group and the cluster where the group exists
+# Specify the VM Group, the name of the VM to be added to the group and the cluster where the group exists
 vm_group = ''
 while not vm_group:
     vm_group = raw_input("VM Group name: ")
